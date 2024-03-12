@@ -29,7 +29,7 @@ class GeminiRag():
         self.llm = ChatGoogleGenerativeAI(model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0.2)
         self.embeddings = GoogleGenerativeAIEmbeddings(model='models/embedding-001')
         
-        self.memory = QAMemory(10)
+        self.memory = QAMemory(3)
         self.db = None
 
     def crawlJobs(self): 
