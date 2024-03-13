@@ -11,6 +11,7 @@ unstructured
 gpt4all
 faiss-cpu
 pypdf
+PyPDF2
 
 google-generativeai
 langchain-google-genai

@@ -23,3 +23,6 @@ pip install -r requirements.txt
 python app.py
 
 ```
+
+# Some useful Google GenAI info
+https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason
