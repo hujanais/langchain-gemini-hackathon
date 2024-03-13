@@ -19,8 +19,8 @@ virtualenv venv
 source venv/bin/activate # activate virtual environment to start work
 pip install -r requirements.txt
 
-# start the console application.
-python app.py
+# start the application in steamlit
+streamlit run app.py
 
 ```
 
