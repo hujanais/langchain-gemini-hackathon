@@ -10,6 +10,7 @@ bs4
 unstructured
 gpt4all
 faiss-cpu
+pypdf
 
 google-generativeai
 langchain-google-genai
