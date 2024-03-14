@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
 
+from classes.fiass_utility import FiassUtility
+
 load_dotenv()
 from operator import itemgetter
 
@@ -32,6 +34,39 @@ class Agent:
         self.resume = ""
         self.memory = QAMemory(3)
         self.db = None
+        self.chain = None
+
+    def buildChain(self):
+        # Prompt Template
+        template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  You will also be able to analyze the candidate's resume.  Reply with Markdown syntax.
+        You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.
+
+        Answer questions based only on the following:
+        context: {context}
+
+        Current conversation:
+        {history}
+        Candidate's resume: {resume}
+        Question: {question}
+        """
+        prompt = ChatPromptTemplate.from_template(template)
+
+        retriever = self.db.as_retriever()
+
+        # Build the langchain
+        self.chain = (
+            {
+                "context": itemgetter("question") | retriever,
+                "question": itemgetter("question"),
+                "resume": itemgetter("resume"),
+                "history": itemgetter("history"),
+            }
+            | prompt
+            | self.llm
+            | StrOutputParser()
+        )
+
+        print('conversation chain complete...');
 
     def uploadResume2(self, uploaded_file):
         reader = pdf.PdfReader(uploaded_file)
@@ -39,9 +74,6 @@ class Agent:
         for page in range(len(reader.pages)):
             page = reader.pages[page]
             self.resume += str(page.extract_text())
-
-        print(self.resume)
-
 
     def uploadResume(self):
         # load resume
@@ -53,9 +85,29 @@ class Agent:
             page = reader.pages[page]
             self.resume += str(page.extract_text())
 
-    def crawlJobs(self):
-        self.uploadResume()
+    # we shouldn't be doing this. use tools instead.
+    # upload resume and add to the vector-db
+    # def uploadResume3(self):
+    #      # load resume
+    #     reader = pdf.PdfReader(
+    #         "./resumes/Communications Electronics Technician-Resume Sample.pdf"
+    #     )
 
+    #     resume = "Candidate Resume: "
+    #     for page in range(len(reader.pages)):
+    #         page = reader.pages[page]
+    #         resume += str(page.extract_text())
+
+    #     documents = []
+    #     documents.append(Document(page_content=resume))
+
+    #     newVector = FAISS.from_documents(documents, self.embeddings)
+
+    #     print("count before:", self.db.index.ntotal)
+    #     self.db.merge_from(newVector)
+    #     print("count after:", self.db.index.ntotal)
+
+    def crawlJobs(self):
         # load documents
         loader = DirectoryLoader(
             "./documents", glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
@@ -77,37 +129,10 @@ class Agent:
         # perform embeddings
         self.db = FAISS.from_documents(documents, self.embeddings)
 
+        print('embeddings completed...');
+
     def chat(self, question: str):
-        # Prompt Template
-        template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  You will also be able to analyze the candidate's resume.  Reply with Markdown syntax.
-        You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.
-
-        Answer questions based only on the following:
-        context: {context}
-        resume: {resume}
-
-        Current conversation:
-        {history}
-        Question: {question}
-        """
-        prompt = ChatPromptTemplate.from_template(template)
-
-        retriever = self.db.as_retriever()
-
-        # Build the langchain
-        chain = (
-            {
-                "context": itemgetter("question") | retriever,
-                "question": itemgetter("question"),
-                "resume": itemgetter("resume"),
-                "history": itemgetter("history"),
-            }
-            | prompt
-            | self.llm
-            | StrOutputParser()
-        )
-
-        result = chain.invoke(
+        result = self.chain.invoke(
             {
                  "question": question,
                  "resume": self.resume,

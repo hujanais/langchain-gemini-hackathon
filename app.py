@@ -5,12 +5,19 @@ from classes.agent import Agent
 # if __name__ == "__main__":
 #     agent = Agent()
 #     agent.crawlJobs()
+#     agent.buildChain()
 
+#     count = 0
 #     while True:
 #         user_input = input(">> ")
 #         if user_input.lower() == "bye":
 #             print("LLM: Goodbye")
 #             break
+
+#         if (count == 1):
+#             agent.uploadResume()
+
+#         count = count + 1
 
 #         if user_input is not None:
 #             resp = agent.chat(user_input)
@@ -19,7 +26,8 @@ from classes.agent import Agent
 if __name__ == "__main__":
     agent = Agent()
     agent.crawlJobs()
-
+    agent.buildChain()
+    
     st.markdown("### Welcome to the Military Job Bank 🛡️💼")
 
     # build sidebar
