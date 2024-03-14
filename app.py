@@ -23,11 +23,17 @@ from classes.agent import Agent
 #             resp = agent.chat(user_input)
 #             print(resp)
 
+def initializeAgent() -> Agent:
+    if 'agent' not in st.session_state:
+        st.session_state.agent = Agent()
+        st.session_state.agent.crawlJobs()
+        st.session_state.agent.buildChain()
+
+    return st.session_state.agent
+
 if __name__ == "__main__":
-    agent = Agent()
-    agent.crawlJobs()
-    agent.buildChain()
-    
+    agent = initializeAgent()
+
     st.markdown("### Welcome to the Military Job Bank 🛡️💼")
 
     # build sidebar
