@@ -7,17 +7,11 @@ from classes.agent import Agent
 #     agent.crawlJobs()
 #     agent.buildChain()
 
-#     count = 0
 #     while True:
 #         user_input = input(">> ")
 #         if user_input.lower() == "bye":
 #             print("LLM: Goodbye")
 #             break
-
-#         if (count == 1):
-#             agent.uploadResume()
-
-#         count = count + 1
 
 #         if user_input is not None:
 #             resp = agent.chat(user_input)
@@ -42,8 +36,8 @@ if __name__ == "__main__":
         submit_resume = st.button("Upload")
 
         if submit_resume:
-            agent.uploadResume()
-            # agent.uploadResume2(uploaded_file)
+            # agent.uploadResume()
+            agent.uploadResume2(uploaded_file)
 
     # initialize session state
     if "messages" not in st.session_state:
