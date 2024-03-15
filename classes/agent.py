@@ -39,7 +39,7 @@ class Agent:
     def buildChain(self):
         # Prompt Template
         template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  You will also be able to analyze the candidate's resume.  Reply with Markdown syntax.
-        You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.
+        You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.  You will reply concisely in a conversational manner.
 
         Answer questions based only on the following:
         context: {context}
@@ -85,28 +85,6 @@ class Agent:
             page = reader.pages[page]
             self.resume += str(page.extract_text())
 
-    # we shouldn't be doing this. use tools instead.
-    # upload resume and add to the vector-db
-    # def uploadResume3(self):
-    #      # load resume
-    #     reader = pdf.PdfReader(
-    #         "./resumes/Communications Electronics Technician-Resume Sample.pdf"
-    #     )
-
-    #     resume = "Candidate Resume: "
-    #     for page in range(len(reader.pages)):
-    #         page = reader.pages[page]
-    #         resume += str(page.extract_text())
-
-    #     documents = []
-    #     documents.append(Document(page_content=resume))
-
-    #     newVector = FAISS.from_documents(documents, self.embeddings)
-
-    #     print("count before:", self.db.index.ntotal)
-    #     self.db.merge_from(newVector)
-    #     print("count after:", self.db.index.ntotal)
-
     def crawlJobs(self):
         # load documents
         loader = DirectoryLoader(
@@ -132,15 +110,17 @@ class Agent:
         print('embeddings completed...');
 
     def chat(self, question: str):
-        result = self.chain.invoke(
-            {
-                 "question": question,
-                 "resume": self.resume,
-                 "history": self.memory.getHistory(),
-            }
-        )
+        try:
+            result = self.chain.invoke(
+                {
+                    "question": question,
+                    "resume": self.resume,
+                    "history": self.memory.getHistory(),
+                }
+            )
 
-        # update the conversation history
-        self.memory.add(question, result)
-
-        return result
+            # update the conversation history
+            self.memory.add(question, result)
+            return result
+        except Exception as err:
+            return err
