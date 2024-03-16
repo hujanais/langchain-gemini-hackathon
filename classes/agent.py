@@ -33,12 +33,12 @@ class Agent:
         self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         self.resume = ""
         self.memory = QAMemory(3)
-        self.db = None
+        self.db = None 
         self.chain = None
 
     def buildChain(self):
         # Prompt Template
-        template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  You will also be able to analyze the candidate's resume.  Reply with Markdown syntax.
+        template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  You will also be able to analyze the candidate's resume.
         You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.  You will reply concisely in a conversational manner.
 
         Answer questions based only on the following:
@@ -68,22 +68,22 @@ class Agent:
 
         print('conversation chain complete...');
 
-    def uploadResume2(self, uploaded_file):
+    def uploadResume(self, uploaded_file):
         reader = pdf.PdfReader(uploaded_file)
         self.resume = ""
         for page in range(len(reader.pages)):
             page = reader.pages[page]
             self.resume += str(page.extract_text())
 
-    def uploadResume(self):
-        # load resume
-        reader = pdf.PdfReader(
-            "./resumes/Communications Electronics Technician-Resume Sample.pdf"
-        )
-        self.resume = ""
-        for page in range(len(reader.pages)):
-            page = reader.pages[page]
-            self.resume += str(page.extract_text())
+    # def uploadResume(self):
+    #     # load resume
+    #     reader = pdf.PdfReader(
+    #         "./resumes/Communications Electronics Technician-Resume Sample.pdf"
+    #     )
+    #     self.resume = ""
+    #     for page in range(len(reader.pages)):
+    #         page = reader.pages[page]
+    #         self.resume += str(page.extract_text())
 
     def crawlJobs(self):
         # load documents

@@ -5,13 +5,14 @@ langchain-openai
 langchain-mistralai
 python-dotenv
 markdown
-streamlit
 bs4
 unstructured
 gpt4all
 faiss-cpu
 pypdf
 PyPDF2
+
+streamlit
 
 google-generativeai
 langchain-google-genai
