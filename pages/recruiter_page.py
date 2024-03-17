@@ -22,25 +22,29 @@ def recruiter_page(agent: RecruiterAgent):
 
         candidates = [
             {
-                "id": "123",
                 "name": "candidate-1",
                 "rating": "5",
+                "comments": "good mechanical experience",
             },
             {
-                "id": "123",
                 "name": "candidate-1",
                 "rating": "5",
+                "comments": "good mechanical experience",
             },
             {
-                "id": "123",
                 "name": "candidate-1",
                 "rating": "5",
-                "summary": "highlight special attributes",
+                "comments": "good mechanical experience",
             },
             {
-                "id": "123",
                 "name": "candidate-1",
                 "rating": "5",
+                "comments": "good mechanical experience",
+            },
+            {
+                "name": "candidate-1",
+                "rating": "5",
+                "comments": "good mechanical experience",
             },
         ]
 
