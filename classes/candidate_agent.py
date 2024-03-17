@@ -1,5 +1,8 @@
 import os
 from dotenv import load_dotenv
+from langchain.globals import set_verbose
+
+set_verbose(True)
 
 from classes.fiass_utility import FiassUtility
 
@@ -25,21 +28,28 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
-class Agent:
+
+class CandidateAgent:
     def __init__(self):
+        print("ctor CandidateAgent")
         apiKey = os.environ["GOOGLE_API_KEY"]
         self.llm = ChatGoogleGenerativeAI(
-            model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0.2
+            model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0
         )
         self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         self.memory = QAMemory(3)
-        self.db = None 
-        self.resumeEmbedding = None
+        self.db = None
+        self.chain = None
+        self.resume = None
+
+        self.crawlJobs()
+
+    def initialize_no_resume(self):
+        self.memory = QAMemory(3)
         self.chain = None
 
-    def buildChain(self):
         # Prompt Template
-        template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  You will also be able to analyze the candidate's resume.
+        template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  Reply with Markdown syntax.
         You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.  You will reply concisely in a conversational manner.
 
         Answer questions based only on the following:
@@ -47,20 +57,17 @@ class Agent:
 
         Current conversation:
         {history}
-        Candidate's resume: {resume}
         Question: {question}
         """
         prompt = ChatPromptTemplate.from_template(template)
 
         retriever = self.db.as_retriever()
-        resume_retriever = self.resumeEmbedding.as_retriever()
 
         # Build the langchain
         self.chain = (
             {
                 "context": itemgetter("question") | retriever,
                 "question": itemgetter("question"),
-                "resume": itemgetter("question") | resume_retriever,
                 "history": itemgetter("history"),
             }
             | prompt
@@ -68,28 +75,56 @@ class Agent:
             | StrOutputParser()
         )
 
-        print('conversation chain complete...');
+        print("initialize_with_no_resume completed...")
 
-    def uploadResume(self, uploaded_file):
-        reader = pdf.PdfReader(uploaded_file)
+    def initialize_with_resume(self, uploaded_resume):
+        self.memory = QAMemory(3)
+        self.chain = None
+
+        reader = pdf.PdfReader(uploaded_resume)
         resume = "** Candidate's Resume **"
         for page in range(len(reader.pages)):
             page = reader.pages[page]
             resume += str(page.extract_text())
 
-        self.resumeEmbedding = FAISS.from_documents([Document(page_content=resume)], self.embeddings)
+        # Prompt Template
+        template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  You will also be able to analyze the candidate's resume.  Reply with Markdown syntax.
+        You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.  You will reply concisely in a conversational manner.
 
-    def uploadResume2(self):
-        loader = PyPDFLoader("./resumes/Aerospace-Engineer-Resume-Sample.pdf")
-        documents = loader.load()
-        documents[0].page_content = "**Candidate Resume**" + documents[0].page_content
-        print(documents[0].page_content)
-        # resume = "** Candidate's Resume **"
-        # for page in range(len(reader.pages)):
-        #     page = reader.pages[page]
-        #     resume += str(page.extract_text())
+        Answer questions based only on the following:
+        context: {context}
+        resume: {resume}
 
-        self.resumeEmbedding = FAISS.from_documents(documents, self.embeddings)
+        Current conversation:
+        {history}
+        Question: {question}
+        """
+        prompt = ChatPromptTemplate.from_template(template)
+        resume = self.uploadResume2()
+
+        retriever = self.db.as_retriever()
+
+        # Build the langchain
+        self.chain = (
+            {
+                "context": itemgetter("question") | retriever,
+                "resume": itemgetter("resume"),
+                "question": itemgetter("question"),
+                "history": itemgetter("history"),
+            }
+            | prompt
+            | self.llm
+            | StrOutputParser()
+        )
+
+        print("initialize_with_resume completed...")
+
+    def uploadResume(self, uploaded_file):
+        reader = pdf.PdfReader(uploaded_file)
+        self.resume = ''
+        for page in range(len(reader.pages)):
+            page = reader.pages[page]
+            self.resume += str(page.extract_text())
 
     def crawlJobs(self):
         # load documents
@@ -113,16 +148,14 @@ class Agent:
         # perform embeddings
         self.db = FAISS.from_documents(documents, self.embeddings)
 
-        resumes = [Document(page_content="Resume not found")]
-        self.resumeEmbedding = FAISS.from_documents(resumes, self.embeddings)
-
-        print('embeddings completed...')
+        print("embeddings completed...")
 
     def chat(self, question: str):
         try:
             result = self.chain.invoke(
                 {
                     "question": question,
+                    "resume": self.resume,
                     "history": self.memory.getHistory(),
                 }
             )
