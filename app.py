@@ -8,6 +8,7 @@ if __name__ == "__main__":
     agent = Agent()
     agent.crawlJobs()
     agent.buildChain()
+    agent.uploadResume2()
 
     while True:
         user_input = input(">> ")
