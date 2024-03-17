@@ -1,8 +1,8 @@
 import pandas as pd
 import streamlit as st
 
-from classes.agent import Agent
-from classes.tool_agent import ToolAgent
+from agents.obsolete.agent import Agent
+from agents.tool_agent import ToolAgent
 
 if __name__ == "__main__":
     agent = Agent()

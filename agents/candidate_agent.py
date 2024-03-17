@@ -2,17 +2,20 @@ import os
 from dotenv import load_dotenv
 from langchain.globals import set_verbose
 
+from datastore.job_store import enumerateJobs
+
 set_verbose(True)
 
-from classes.fiass_utility import FiassUtility
+from agents.fiass_utility import FiassUtility
 
 load_dotenv()
 from operator import itemgetter
 
-from classes.qa_memory import QAMemory
+from agents.qa_memory import QAMemory
 
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_community.embeddings import GPT4AllEmbeddings
 import PyPDF2 as pdf
 from langchain_community.document_loaders import PyPDFLoader
 
@@ -36,7 +39,8 @@ class CandidateAgent:
         self.llm = ChatGoogleGenerativeAI(
             model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0
         )
-        self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        # self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        self.embeddings = GPT4AllEmbeddings()
         self.memory = QAMemory(3)
         self.db = None
         self.chain = None
@@ -127,13 +131,9 @@ class CandidateAgent:
             self.resume += str(page.extract_text())
 
     def crawlJobs(self):
-        # load documents
-        loader = DirectoryLoader(
-            "./documents", glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
-        )
-        pages = loader.load()
+        pages = enumerateJobs()
 
-        # Extract text content from each page
+        # Extract page_content from each page
         page_texts = [page.page_content for page in pages]
 
         # Option #1. manual splitting by page
