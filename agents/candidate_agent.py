@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from langchain.globals import set_verbose
 
-from datastore.job_store import enumerateJobs
+from datastore.job_store import JobDataStore
 
 set_verbose(True)
 
@@ -31,6 +31,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
+jobDataStore = JobDataStore()
 
 class CandidateAgent:
     def __init__(self):
@@ -39,12 +40,11 @@ class CandidateAgent:
         self.llm = ChatGoogleGenerativeAI(
             model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0
         )
-        # self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-        self.embeddings = GPT4AllEmbeddings()
+        self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         self.memory = QAMemory(3)
         self.db = None
         self.chain = None
-        self.resume = None
+        self.list_of_jobs = []
 
         self.crawlJobs()
 
@@ -56,6 +56,9 @@ class CandidateAgent:
         template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  Reply with Markdown syntax.
         You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.  You will reply concisely in a conversational manner.
 
+        You have access to the list of all job openings: [{list_of_jobs}]
+        You do not have the candidate's resume.
+        
         Answer questions based only on the following:
         context: {context}
 
@@ -64,6 +67,9 @@ class CandidateAgent:
         Question: {question}
         """
         prompt = ChatPromptTemplate.from_template(template)
+        prompt = prompt.partial(
+            list_of_jobs=self.list_of_jobs
+        )
 
         retriever = self.db.as_retriever()
 
@@ -85,6 +91,7 @@ class CandidateAgent:
         self.memory = QAMemory(3)
         self.chain = None
 
+        # read in the resume.
         reader = pdf.PdfReader(uploaded_resume)
         resume = "** Candidate's Resume **"
         for page in range(len(reader.pages)):
@@ -95,16 +102,23 @@ class CandidateAgent:
         template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  You will also be able to analyze the candidate's resume.  Reply with Markdown syntax.
         You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.  You will reply concisely in a conversational manner.
 
+        You have access to the list of all job openings: [{list_of_jobs}]
+        You have access to the candidate's resume: {resume}
+
         Answer questions based only on the following:
         context: {context}
-        resume: {resume}
-
+        
         Current conversation:
         {history}
         Question: {question}
         """
         prompt = ChatPromptTemplate.from_template(template)
-        resume = self.uploadResume(uploaded_resume)
+        prompt = prompt.partial(
+            list_of_jobs=self.list_of_jobs,
+            resume=resume
+        )
+
+        print(prompt)
 
         retriever = self.db.as_retriever()
 
@@ -112,7 +126,6 @@ class CandidateAgent:
         self.chain = (
             {
                 "context": itemgetter("question") | retriever,
-                "resume": itemgetter("resume"),
                 "question": itemgetter("question"),
                 "history": itemgetter("history"),
             }
@@ -123,20 +136,16 @@ class CandidateAgent:
 
         print("initialize_with_resume completed...")
 
-    def uploadResume(self, uploaded_file):
-        reader = pdf.PdfReader(uploaded_file)
-        self.resume = ''
-        for page in range(len(reader.pages)):
-            page = reader.pages[page]
-            self.resume += str(page.extract_text())
-
     def crawlJobs(self):
-        pages = enumerateJobs()
+        jobs = jobDataStore.enumerateJobs()
+        pages = list(map(lambda x: x.document, jobs))
+        self.list_of_jobs = ', '.join(list(map(lambda x: x.title, jobs)))
 
         # Extract page_content from each page
         page_texts = [page.page_content for page in pages]
 
-        # Option #1. manual splitting by page
+        # Option #1. manual splitting by page.  this seems to be better to keep maintain
+        # context of each job description
         documents = []
         for page_text in page_texts:
             documents.append(Document(page_content=page_text))
