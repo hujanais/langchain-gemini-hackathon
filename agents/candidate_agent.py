@@ -4,12 +4,12 @@ from langchain.globals import set_verbose
 
 set_verbose(True)
 
-from classes.fiass_utility import FiassUtility
+from agents.fiass_utility import FiassUtility
 
 load_dotenv()
 from operator import itemgetter
 
-from classes.qa_memory import QAMemory
+from agents.qa_memory import QAMemory
 
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
@@ -129,7 +129,7 @@ class CandidateAgent:
     def crawlJobs(self):
         # load documents
         loader = DirectoryLoader(
-            "./documents", glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
+            "./datastore/jobs", glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
         )
         pages = loader.load()
 

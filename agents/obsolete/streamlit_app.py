@@ -1,23 +1,39 @@
+import pandas as pd
 import streamlit as st
 
-from agents.candidate_agent import CandidateAgent
+from agents.obsolete.agent import Agent
 
-def candidate_page(agent: CandidateAgent):
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("Candidate View")
-    with col2:
-        # clear conversation button
-        if st.button("Clear"):
-            st.session_state.clear()
-    with col3:
-        st.write('Hello, *World!* :sunglasses:')
+def initializeAgent() -> Agent:
+    if "agent" not in st.session_state:
+        st.session_state.agent = Agent()
+        st.session_state.agent.crawlJobs()
+        st.session_state.agent.buildChain()
+
+    return st.session_state.agent
+
+
+if __name__ == "__main__":
+    agent = initializeAgent()
+
+    st.markdown("### Welcome to the Military Job Bank 🛡️💼")
+
+    # build sidebar
+    with st.sidebar:
+        uploaded_file = st.file_uploader("Upload your resume(PDF)...", type=["pdf"])
+        submit_resume = st.button("Upload")
+
+        if submit_resume:
+            agent.uploadResume(uploaded_file)
 
     # initialize session state
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
             {"role": "assistant", "content": "How can I help you?"}
         ]
+
+    # clear conversation button
+    if st.button("Clear"):
+        st.session_state.clear()
 
     # Display or clear chat messages
     for message in st.session_state.messages:
@@ -48,7 +64,7 @@ def candidate_page(agent: CandidateAgent):
         message = {"role": "assistant", "content": full_response}
         st.session_state.messages.append(message)
 
-    # show job table
+    # awesome table
     sample_data = [
         {
             "title": "123",
