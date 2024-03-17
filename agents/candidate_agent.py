@@ -104,7 +104,7 @@ class CandidateAgent:
         Question: {question}
         """
         prompt = ChatPromptTemplate.from_template(template)
-        resume = self.uploadResume2()
+        resume = self.uploadResume(uploaded_resume)
 
         retriever = self.db.as_retriever()
 
