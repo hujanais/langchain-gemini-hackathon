@@ -14,6 +14,7 @@ from agents.qa_memory import QAMemory
 
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_community.embeddings import GPT4AllEmbeddings
 import PyPDF2 as pdf
 from langchain_community.document_loaders import PyPDFLoader
 
@@ -38,7 +39,8 @@ class RecruiterAgent:
         self.llm = ChatGoogleGenerativeAI(
             model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0.2
         )
-        self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        # self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        self.embeddings = GPT4AllEmbeddings()
         self.db = None
         self.chain = None
         self.jobs: list[JobModel] = jobDataStore.enumerateJobs()
