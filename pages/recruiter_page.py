@@ -8,41 +8,17 @@ def recruiter_page(agent: RecruiterAgent):
 
     jobs = JobDataStore().getAllJobs()
     job_titles = list(map(lambda x: x.title, jobs))
+    
+    # Create a dictionary mapping job titles to job objects
+    job_dict = {job.title: job for job in jobs}
 
-    option = st.selectbox(
+    selectedJobTitle = st.selectbox(
         "Select job",
         job_titles,
     )
 
-    if option:
-        st.markdown(f"Analyzing {option}")
-
-        candidates = [
-            {
-                "name": "candidate-1",
-                "rating": "5",
-                "comments": "good mechanical experience",
-            },
-            {
-                "name": "candidate-1",
-                "rating": "5",
-                "comments": "good mechanical experience",
-            },
-            {
-                "name": "candidate-1",
-                "rating": "5",
-                "comments": "good mechanical experience",
-            },
-            {
-                "name": "candidate-1",
-                "rating": "5",
-                "comments": "good mechanical experience",
-            },
-            {
-                "name": "candidate-1",
-                "rating": "5",
-                "comments": "good mechanical experience",
-            },
-        ]
-
-        st.table(candidates)
+    if selectedJobTitle:
+        st.markdown(f"Analyzing {selectedJobTitle}")
+        selectedJob = job_dict[selectedJobTitle]
+        resp = agent.analyze(job=selectedJob, question="can you rate the candidates (1-5) based on the job description.  List them according to highest to lowest rating")
+        st.markdown(resp)

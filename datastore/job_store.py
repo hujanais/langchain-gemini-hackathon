@@ -19,7 +19,6 @@ class JobDataStore:
         )
 
         self.documents = self.jobs + loader.load()
-        print(self.documents)
 
     def getAllDocs(self) -> list[JobModel]:
         allDocs: list[JobModel] = []
