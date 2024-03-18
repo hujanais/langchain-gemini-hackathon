@@ -1,20 +1,17 @@
 import streamlit as st
 
 from agents.recruiter_agent import RecruiterAgent
-
+from datastore.job_store import JobDataStore
 
 def recruiter_page(agent: RecruiterAgent):
     st.markdown("### Recruiter View")
 
+    jobs = JobDataStore().getAllJobs()
+    job_titles = list(map(lambda x: x.title, jobs))
+
     option = st.selectbox(
         "Select job",
-        (
-            "14 AIR DEFENSE ARTILLERY OFFICER",
-            "14G AIR DEFENSE BATTLE MANAGEMENT SYSTEM OPERATOR",
-            "17B CYBER AND ELECTRONIC WARFARE OFFICER",
-            "25D TELECOMMUNICATIONS OPERATOR-MAINTAINER",
-            "170A CYBER OPERATIONS TECHNICIAN",
-        ),
+        job_titles,
     )
 
     if option:

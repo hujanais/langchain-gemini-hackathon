@@ -47,7 +47,7 @@ class CandidateAgent:
         self.chain = None
         self.list_of_jobs = []
 
-        self.crawlJobs()
+        self.loadAllDocs()
 
     def initialize_no_resume(self):
         self.memory = QAMemory(3)
@@ -137,8 +137,8 @@ class CandidateAgent:
 
         print("initialize_with_resume completed...")
 
-    def crawlJobs(self):
-        jobs = jobDataStore.enumerateJobs()
+    def loadAllDocs(self):
+        jobs = jobDataStore.getAllDocs()
         pages = list(map(lambda x: x.document, jobs))
         self.list_of_jobs = ', '.join(list(map(lambda x: x.title, jobs)))
 
