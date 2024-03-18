@@ -48,10 +48,6 @@ class RecruiterAgent:
         job_titles = list(map(lambda x: x.document, self.jobs))
         return job_titles
 
-    def analyzeJob(jobId: str) -> list:
-        # analyze the job against pool of candidates
-        return []
-
     def crawlResumes(self):
         resumes = resumeDataStore.getResumes()
         pages = list(map(lambda x: x.resume, resumes))

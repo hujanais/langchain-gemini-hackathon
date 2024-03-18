@@ -119,8 +119,6 @@ class CandidateAgent:
             resume=resume
         )
 
-        print(prompt)
-
         retriever = self.db.as_retriever()
 
         # Build the langchain

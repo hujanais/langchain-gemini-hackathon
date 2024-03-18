@@ -3,16 +3,6 @@ import streamlit as st
 from agents.candidate_agent import CandidateAgent
 
 def candidate_page(agent: CandidateAgent):
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("Candidate View")
-    with col2:
-        # clear conversation button
-        if st.button("Clear"):
-            st.session_state.clear()
-    with col3:
-        st.write('Hello, *World!* :sunglasses:')
-
     # initialize session state
     if "messages" not in st.session_state:
         st.session_state["messages"] = [
@@ -47,51 +37,3 @@ def candidate_page(agent: CandidateAgent):
 
         message = {"role": "assistant", "content": full_response}
         st.session_state.messages.append(message)
-
-    # show job table
-    sample_data = [
-        {
-            "title": "123",
-            "branch": "air-force",
-            "description": "description",
-            "link": "www.google.com",
-        },
-        {
-            "title": "123",
-            "branch": "air-force",
-            "description": "description",
-            "link": "www.google.com",
-        },
-        {
-            "title": "123",
-            "branch": "air-force",
-            "description": "description",
-            "link": "www.google.com",
-        },
-        {
-            "title": "123",
-            "branch": "air-force",
-            "description": "description",
-            "link": "www.google.com",
-        },
-        {
-            "title": "123",
-            "branch": "air-force",
-            "description": "description",
-            "link": "www.google.com",
-        },
-        {
-            "title": "123",
-            "branch": "air-force",
-            "description": "description",
-            "link": "www.google.com",
-        },
-        {
-            "title": "123",
-            "branch": "air-force",
-            "description": "description",
-            "link": "www.google.com",
-        },
-    ]
-
-    st.table(sample_data)
