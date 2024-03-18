@@ -164,7 +164,6 @@ class CandidateAgent:
             result = self.chain.invoke(
                 {
                     "question": question,
-                    "resume": self.resume,
                     "history": self.memory.getHistory(),
                 }
             )
