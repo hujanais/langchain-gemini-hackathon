@@ -32,8 +32,8 @@ class RecruiterAgent:
         self.llm = ChatGoogleGenerativeAI(
             model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0.2
         )
-        # self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-        self.embeddings = GPT4AllEmbeddings()
+        self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        # self.embeddings = GPT4AllEmbeddings()
         self.db = None
         self.chain = None
         self.analyzer_chain = None
