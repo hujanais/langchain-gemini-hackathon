@@ -1,14 +1,8 @@
-import pandas as pd
-import streamlit as st
-
-from agents.obsolete.agent import Agent
-from agents.tool_agent import ToolAgent
+from agents.candidate_agent import CandidateAgent
 
 if __name__ == "__main__":
-    agent = Agent()
-    agent.crawlJobs()
-    agent.buildChain()
-    agent.uploadResume2()
+    agent = CandidateAgent()
+    agent.initialize_no_resume()
 
     while True:
         user_input = input(">> ")
