@@ -24,10 +24,9 @@ class ResumeDataStore:
             for page in reader.pages:
                 resumeText += page.extract_text()
 
-            for page_text in resumeText:
-                documents.append(Document(page_content=page_text))
-
-    def enumerateResumes(self) -> list[ResumeModel]:
+            self.resumes.append(ResumeModel(name=pair[0], resume=Document(page_content=resumeText)))
+        
+    def getResumes(self) -> list[ResumeModel]:
         return self.resumes
 
     # def enumerateJobs(self) -> list[JobModel]:

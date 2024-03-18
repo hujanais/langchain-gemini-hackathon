@@ -15,14 +15,7 @@ from agents.qa_memory import QAMemory
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.embeddings import GPT4AllEmbeddings
-import PyPDF2 as pdf
 from langchain_community.document_loaders import PyPDFLoader
-
-from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_community.document_loaders import (
-    DirectoryLoader,
-    UnstructuredMarkdownLoader,
-)
 
 from langchain_core.documents import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -43,9 +36,12 @@ class RecruiterAgent:
         self.embeddings = GPT4AllEmbeddings()
         self.db = None
         self.chain = None
-        self.jobs: list[JobModel] = jobDataStore.enumerateJobs()
+        self.analyzer_chain = None
+        self.jobs: list[JobModel] = jobDataStore.getAllJobs()
 
         self.crawlResumes()
+        self.buildPromptTemplate()
+        self.buildAnalyzerPromptTemplate()
 
     # return list of job titles
     def enumerateJobs(self) -> list[str]:
@@ -57,40 +53,117 @@ class RecruiterAgent:
         return []
 
     def crawlResumes(self):
-        resumes = resumeDataStore.enumerateResumes()
-        # pages = list(map(lambda x: x.document, jobs))
-        # self.list_of_jobs = ', '.join(list(map(lambda x: x.title, jobs)))
+        resumes = resumeDataStore.getResumes()
+        pages = list(map(lambda x: x.resume, resumes))
 
-        # # Extract page_content from each page
-        # page_texts = [page.page_content for page in pages]
+        # Extract page_content from each page
+        page_texts = [page.page_content for page in pages]
 
-        # # Option #1. manual splitting by page.  this seems to be better to keep maintain
-        # # context of each job description
-        # documents = []
-        # for page_text in page_texts:
-        #     documents.append(Document(page_content=page_text))
+        # Option #1. manual splitting by page.
+        documents = []
+        for page_text in page_texts:
+            documents.append(Document(page_content=page_text))
 
         # # Option #2. split text into chunks
         # # text_splitter = RecursiveCharacterTextSplitter()
         # # documents = text_splitter.create_documents(page_texts)
 
-        # # perform embeddings
-        # self.db = FAISS.from_documents(documents, self.embeddings)
+        # perform embeddings
+        self.db = FAISS.from_documents(documents, self.embeddings)
 
-        # print("embeddings completed...")
+        print("embeddings completed...")
 
+    def buildAnalyzerPromptTemplate(self):
+        self.memory = QAMemory(3)
+        self.analyzer_chain = None
 
-    # def chat(self, question: str):
-    #     try:
-    #         result = self.chain.invoke(
-    #             {
-    #                 "question": question,
-    #                 "history": self.memory.getHistory(),
-    #             }
-    #         )
+        # Prompt Template
+        template = """You are an experienced military recruiter that is skilled at analyzing jobs and to find candidates that are suitable using their resumes.
+            Given the following job:
+            job: {job}
+            
+            Find and rate candidates from the following candidate list only:
+            context: {context}
 
-    #         # update the conversation history
-    #         self.memory.add(question, result)
-    #         return result
-    #     except Exception as err:
-    #         return err
+            Question: {question}
+            """
+
+        prompt = ChatPromptTemplate.from_template(template)
+
+        retriever = self.db.as_retriever()
+
+        # Build the langchain
+        self.analyzer_chain = (
+            {
+                "context": itemgetter("question") | retriever,
+                "job": itemgetter("job"),
+                "question": itemgetter("question")
+            }
+            | prompt
+            | self.llm
+            | StrOutputParser()
+        )
+
+        print("recruiter agent prompt-template initialized...")
+
+    def buildPromptTemplate(self):
+            self.memory = QAMemory(3)
+            self.chain = None
+
+            # Prompt Template
+            template = """You are an experienced military recruiter that is skilled at analyzing jobs and to find candidates that are suitable using their resumes.
+            
+            Answer questions based only on the following candidate resumes:
+            context: {context}
+
+            Current conversation:
+            {history}
+            Question: {question}
+            """
+            prompt = ChatPromptTemplate.from_template(template)
+
+            retriever = self.db.as_retriever()
+
+            # Build the langchain
+            self.chain = (
+                {
+                    "context": itemgetter("question") | retriever,
+                    "question": itemgetter("question"),
+                    "history": itemgetter("history"),
+                }
+                | prompt
+                | self.llm
+                | StrOutputParser()
+            )
+
+            print("recruiter agent prompt-template initialized...")
+
+    def chat(self, question: str):
+        try:
+            result = self.chain.invoke(
+                {
+                    "question": question,
+                    "history": self.memory.getHistory(),
+                }
+            )
+
+            # update the conversation history
+            self.memory.add(question, result)
+            return result
+        except Exception as err:
+            return err
+
+    def analyze(self, job: str, question: str):
+        try:
+            result = self.analyzer_chain.invoke(
+                {
+                    "question": question,
+                    "job": job
+                }
+            )
+
+            # update the conversation history
+            self.memory.add(question, result)
+            return result
+        except Exception as err:
+            return err 
