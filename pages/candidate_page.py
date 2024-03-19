@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 
 from agents.candidate_agent import CandidateAgent
@@ -13,16 +14,6 @@ def candidate_page(agent: CandidateAgent):
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.write(message["content"])
-
-    # pre-built prompts
-    selectedPrompt = st.selectbox(
-        "Suggested prompts",
-        ['None']
-    )
-
-    if selectedPrompt:
-        if (selectedPrompt != 'None'):
-            print(selectedPrompt)
 
     # chat input
     if prompt := st.chat_input():
@@ -47,3 +38,13 @@ def candidate_page(agent: CandidateAgent):
 
         message = {"role": "assistant", "content": full_response}
         st.session_state.messages.append(message)
+
+    st.text('can we show a list of pre-built prompts')
+    st.text('can we show a list of jobs that fit the candidate in a tabular format?')
+    data = {
+        'Title': ['Job-1', 'Job-2', 'Job-3', 'Job-4'],
+        'Match(%}': [25, 30, 35, 40],
+        'Interested?': [True, True, False, True]
+    }
+    df = pd.DataFrame(data)
+    st.table(df)
