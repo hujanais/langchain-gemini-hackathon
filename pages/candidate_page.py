@@ -14,6 +14,16 @@ def candidate_page(agent: CandidateAgent):
         with st.chat_message(message["role"]):
             st.write(message["content"])
 
+    # pre-built prompts
+    selectedPrompt = st.selectbox(
+        "Suggested prompts",
+        ['None']
+    )
+
+    if selectedPrompt:
+        if (selectedPrompt != 'None'):
+            print(selectedPrompt)
+
     # chat input
     if prompt := st.chat_input():
         st.session_state.messages.append({"role": "user", "content": prompt})

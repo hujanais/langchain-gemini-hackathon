@@ -107,7 +107,8 @@ class RecruiterAgent:
             self.chain = None
 
             # Prompt Template
-            template = """You are an experienced military recruiter that is skilled at analyzing jobs and to find candidates that are suitable using their resumes.
+            template = """You are an skilled ATS (Applicant Tracking System) scanner with a deep understanding of data science and ATS functionality, 
+                your task is to evaluate the resume against the provided job description. 
             
             Answer questions based only on the following candidate resumes:
             context: {context}

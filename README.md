@@ -26,3 +26,7 @@ streamlit run app.py
 
 # Some useful Google GenAI info
 https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason
+
+# Deploy dockerized app to Google cloudrun
+gcloud builds submit --tag gcr.io/cap-ragged-gem/streamlit-app --project=cap-ragged-gem
+gcloud run deploy --image gcr.io/cap-ragged-gem/streamlit-app --platform managed --project=cap-ragged-gem --allow-unauthenticated
