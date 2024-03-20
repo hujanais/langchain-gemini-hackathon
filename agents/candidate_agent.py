@@ -1,8 +1,7 @@
 import os
 from dotenv import load_dotenv
-from langchain.globals import set_verbose
 
-from agents.prompt_templates.de import get_DE_candidate_no_resume_template
+from agents.prompt_templates.de import get_DE_candidate_no_resume_template, get_DE_candidate_with_resume_template
 from agents.prompt_templates.us import get_US_candidate_no_resume_template
 from datastore.job_store import JobDataStore
 from agents.fiass_utility import FiassUtility
@@ -80,15 +79,19 @@ class CandidateAgent:
         self.memory = QAMemory(3)
         self.chain = None
 
-        # read in the resume.
-        reader = pdf.PdfReader(uploaded_resume)
+        # read in the resume in pdf format
+        # reader = pdf.PdfReader(uploaded_resume)
+        # resume = "** Candidate's Resume **"
+        # for page in range(len(reader.pages)):
+        #     page = reader.pages[page]
+        #     resume += str(page.extract_text())
+
+        # read in the resume in markdown format
         resume = "** Candidate's Resume **"
-        for page in range(len(reader.pages)):
-            page = reader.pages[page]
-            resume += str(page.extract_text())
+        resume += uploaded_resume.getvalue().decode('utf-8')
 
         # Prompt Template
-        template = get_DE_candidate_no_resume_template()
+        template = get_DE_candidate_with_resume_template()
 
         prompt = ChatPromptTemplate.from_template(template)
         prompt = prompt.partial(
