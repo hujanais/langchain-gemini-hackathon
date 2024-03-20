@@ -49,7 +49,7 @@ class RecruiterAgent:
         return job_titles
 
     def crawlResumes(self):
-        resumes = resumeDataStore.getResumes()
+        resumes = resumeDataStore.getDEResumes()
         pages = list(map(lambda x: x.resume, resumes))
 
         # Extract page_content from each page

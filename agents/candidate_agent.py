@@ -2,10 +2,9 @@ import os
 from dotenv import load_dotenv
 from langchain.globals import set_verbose
 
+from agents.prompt_templates.de import get_DE_candidate_no_resume_template
+from agents.prompt_templates.us import get_US_candidate_no_resume_template
 from datastore.job_store import JobDataStore
-
-set_verbose(True)
-
 from agents.fiass_utility import FiassUtility
 
 load_dotenv()
@@ -54,19 +53,8 @@ class CandidateAgent:
         self.chain = None
 
         # Prompt Template
-        template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  Reply with Markdown syntax.
-        You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.  You will reply concisely in a conversational manner.
+        template = get_DE_candidate_no_resume_template()
 
-        You have access to the list of all job openings: [{list_of_jobs}]
-        You do not have the candidate's resume.
-        
-        Answer questions based only on the following:
-        context: {context}
-
-        Current conversation:
-        {history}
-        Question: {question}
-        """
         prompt = ChatPromptTemplate.from_template(template)
         prompt = prompt.partial(
             list_of_jobs=self.list_of_jobs
@@ -100,20 +88,8 @@ class CandidateAgent:
             resume += str(page.extract_text())
 
         # Prompt Template
-        template = """You are a friendly and useful assistant to help with searching and summarizing military jobs.  You will also be able to analyze the candidate's resume.  Reply with Markdown syntax.
-        You are not only an experience recruiter but also one that is very encouraging and generously identifying appropriate jobs for the candidate.  You will reply concisely in a conversational manner.
+        template = get_DE_candidate_no_resume_template()
 
-        You have access to the following:
-        List of all job openings: [{list_of_jobs}]
-        The candidate's resume: {resume}
-
-        Answer questions based only on the following:
-        context: {context}
-        
-        Current conversation:
-        {history}
-        Question: {question}
-        """
         prompt = ChatPromptTemplate.from_template(template)
         prompt = prompt.partial(
             list_of_jobs=self.list_of_jobs,
