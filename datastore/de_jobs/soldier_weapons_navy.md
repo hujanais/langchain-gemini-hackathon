@@ -2,6 +2,7 @@
 **Title**
 Soldier (m/f/d) for the use of weapons in the Navy
 
+**Job Description**
 In the Navy's weapons deployment area, they work in a team, support their superiors on board and are deployed in the areas of operations, electronic warfare, sonar detection or signals operations. After intensive theoretical and practical training in all of the areas mentioned above, you will specialize in one of these activities. You will defend against attacks above and below water, evaluate the military situation presented to you, monitor the use of the latest radar and sonar technology, organize the exchange of information on board and advise your managers.
 
 **Your tasks as a soldier for the use of weapons in the Navy**

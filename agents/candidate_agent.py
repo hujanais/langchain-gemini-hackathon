@@ -36,7 +36,7 @@ class CandidateAgent:
         print("ctor CandidateAgent")
         apiKey = os.environ["GOOGLE_API_KEY"]
         self.llm = ChatGoogleGenerativeAI(
-            model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0
+            model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0.1
         )
         self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         # self.embeddings = GPT4AllEmbeddings()

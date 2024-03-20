@@ -1,7 +1,7 @@
 **TITLE**
 Officer (m/f/d) with studies
 
-**in the careers of officers**
+**Job Description**
 
 Whether as a pilot of a combat aircraft, as a nautical officer on a ship or as a platoon leader in a tank company: As an officer, you, as a superior, are responsible for training, leadership and education of the soldiers entrusted to you. They are responsible for planning, organizing and carrying out general military and military-technical training as well as military exercises and operations. In doing so, you will convey the necessary military and technical professionalism for all the challenges associated with being a soldier. From service in the barracks to deployment abroad: In addition to technical expertise, you also need educational skills and assertiveness.
 
