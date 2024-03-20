@@ -23,7 +23,7 @@ def getAgent(agentName: str):
         raise(f'{agentName} not found')
 
 def main():
-    selection = st.sidebar.radio("Select User Type", ("Recruiter", "Candidate"))
+    selection = st.sidebar.radio("Select User Type", ("Candidate", "Recruiter"))
 
     if selection == "Candidate":
         agent = getAgent('candidate_agent')
