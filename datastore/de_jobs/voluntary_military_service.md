@@ -2,7 +2,7 @@
 **Title**
 Voluntary military service
 
-**in the career of the teams**
+**Job Description**
 
 Over a period of 7 to 23 months, you can use the Voluntary Military Service (FWD) to get to know the soldier's profession with all its facets and decide during or afterward whether you want to stay in the Bundeswehr! Get to know your favorite branch of the armed forces and choose for yourself whether you complete your FWD with the cyber and information space, the army, the air force, the navy, the medical service or the armed forces base.
 

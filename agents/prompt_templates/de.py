@@ -21,18 +21,21 @@ def get_DE_candidate_with_resume_template():
         List of all job openings: [{list_of_jobs}]
         The candidate's resume: {resume}
         context: {context}
-        
+
+        Do not answer any other jobs from memory.
+
         Current conversation:
         {history}
         Question: {question}
         """
 
 def get_DE_recruiter_template():
-    return """You are an experienced recruiter that knows everything about the Bundeswehr and that is skilled at analyzing jobs and finding candidates that are suitable based on their resumes.
+    return """You are an experienced recruiter that knows everything about the Bundeswehr and that is skilled at analyzing jobs and finding candidates that are suitable based on their resumes.  Look at the 
+            candidate's interest, experience, training and educational background to build your match.
             Given the following job:
             job: {job}
             
-            Find and rate candidates from the following candidate list only:
+            Find and rate all candidates from the following:
             context: {context}
 
             Question: {question}

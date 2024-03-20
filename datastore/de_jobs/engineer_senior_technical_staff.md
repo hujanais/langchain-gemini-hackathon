@@ -1,6 +1,7 @@
 **Title**
 Civil servant training in the higher service - military technology
 
+**Job Description**
 They research and develop military material. In addition, you decide what the Bundeswehr's equipment must be like. To realize a product, you test and evaluate prototypes, prepare production and monitor series production until acceptance of the finished material. They keep the equipment up to date with the latest technology. Together with renowned institutes, research facilities and industry, you realize future technology.
 
 

@@ -2,6 +2,7 @@
 **Title**
 soldier (m/f/d) of the artillery troop
 
+**Job Description**
 As a member of the artillery force, you are the specialist in the use of large-caliber guns and rockets such as the self-propelled howitzer 2000 or the MARS rocket launcher. You have a strong understanding of the systems used for all weapons used and thus ensure the precise use of the weapon systems. They operate technically complex fire control systems, reconnaissance or weapon systems. You calculate the trajectories of rockets and projectiles and bring in your extensive (ballistics) specialist knowledge. You will pass on your knowledge to young comrades during training and lead them in action. They can be used in artillery formations or units, in staffs and command authorities or in training facilities. Working as a driver is also possible.
 
 **Your tasks as a soldier (m/f/d) in the artillery troops**

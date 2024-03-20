@@ -2,6 +2,7 @@
 **Title**
 Soldier (m/f/d) for electronic warfare
 
+**Job Description**
 In the field of electronic warfare, you are the expert in defending against invisible attacks. They ensure the Bundeswehr’s safe operational and communication capabilities. With their information, they provide an essential component of the Bundeswehr's overall situation. In threatening situations, they protect the operational and communication capabilities of the Bundeswehr and allies by using electronic jamming signals and weapons.
 
 To do this, they use state-of-the-art electronic technologies and weapons. You will responsibly support your superiors with specialist knowledge in order to interpret highly complex situation reports. They use the latest electronics to identify threat situations. They search for enemy radar and radio signals and intercept them. With strong tactical competence, you fight attacks and use jamming signals from electronic weapons. During your Bundeswehr training, you have the opportunity to qualify in the special fields of radio, tactile radio and electronic reconnaissance. There you can develop your special potential. Depending on your individual potential - whether you are technically experienced and interested or have a talent for a foreign language - you will be qualified and deployed in one of these fields of activity.

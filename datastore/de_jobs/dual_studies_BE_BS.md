@@ -1,7 +1,7 @@
 **Title**
 Dual studies: Bachelor of Engineering / Bachelor of Science
 
-**in the senior technical service - specializing in defense technology**
+**Job Description**
 
 With a technical bachelor's degree, you will be optimally prepared for your responsible work in the field of defense technology in the Bundeswehr administration. Depending on the advertisement, you can choose between up to 14 courses at the University of the Bundeswehr in Munich and other partner universities. At the same time, you will begin a career as a civil servant and gain extensive insight into their daily work through internships at our offices.  
 After completing your studies, you will work, for example, in a federal office, a defense technology agency or international arms cooperation institutions and often work with representatives of European partner states, the USA and foreign industry.

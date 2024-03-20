@@ -1,6 +1,7 @@
 **Title**
 Avionics technician (m/f/d) for aircraft
 
+**Job Description**
 Avionics technicians are the specialists for all electronic systems of the Bundeswehr's aircraft. These can be, for example, the C-130J, A400M, DO228LM or P-8A Poseidon transport aircraft, the Eurofighter fighter aircraft or the Sea Lynx naval helicopter. Your area of ​​responsibility includes, among other things, the care, maintenance and repair of the technical systems of the respective aircraft types. Here you check, maintain and test the individual components, devices and systems. You install control systems and new assemblies, configure and commission electronic systems in aircraft. You manage the necessary work steps and team processes. With care, overview and your in-depth specialist knowledge, you will ensure that the aircraft function smoothly and thus contribute to the operational capability of the Bundeswehr.
 
 **Your tasks as a specialist (m/f/d) for aircraft electronics**

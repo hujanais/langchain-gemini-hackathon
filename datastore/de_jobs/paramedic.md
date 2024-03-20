@@ -2,7 +2,7 @@
 **Title**
 Paramedic (m/f/d)
 
-**in the career of specialist non-commissioned officers**
+**Job Description**
 
 As a paramedic, you will support emergency paramedics and doctors under operational and peacetime conditions with first aid measures at the scene of an emergency and with life-saving measures in medical facilities.
 

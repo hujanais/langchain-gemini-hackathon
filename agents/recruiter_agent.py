@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
 import pandas as pd
 
 from agents.fiass_utility import FiassUtility
@@ -31,11 +32,15 @@ class RecruiterAgent:
     def __init__(self):
         apiKey = os.environ["GOOGLE_API_KEY"]
         self.llm = ChatGoogleGenerativeAI(
-            model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0.2
+            model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0.1
         )
+
+        # apiKey = os.environ["OPENAI_KEY"]
+        # self.llm = ChatOpenAI(openai_api_key=apiKey, model_name="gpt-3.5-turbo", temperature=0)
+        
         self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         # self.embeddings = GPT4AllEmbeddings()
-        self.db = None
+        self.resumedb = None
         self.chain = None
         self.analyzer_chain = None
         self.jobs: list[JobModel] = jobDataStore.getAllJobs()
@@ -66,7 +71,7 @@ class RecruiterAgent:
         # # documents = text_splitter.create_documents(page_texts)
 
         # perform embeddings
-        self.db = FAISS.from_documents(documents, self.embeddings)
+        self.resumedb = FAISS.from_documents(documents, self.embeddings)
 
         print("embeddings completed...")
 
@@ -79,7 +84,7 @@ class RecruiterAgent:
 
         prompt = ChatPromptTemplate.from_template(template)
 
-        retriever = self.db.as_retriever()
+        retriever = self.resumedb.as_retriever()
 
         # Build the langchain
         self.analyzer_chain = (
@@ -100,25 +105,24 @@ class RecruiterAgent:
             self.chain = None
 
             # Prompt Template
-            template = """XXXXXXXXXXXXX
+            template = """You are an experienced recruiter that knows everything about the Bundeswehr.  You can analyze the candidate's resume against a selected job description.
+                Reply with Markdown syntax.
             
-            Answer questions based only on the following candidate resumes:
+            Answer questions based only on the following:
             context: {context}
-
-            Current conversation:
-            {history}
+            job: itemgetter("job"),
             Question: {question}
             """
             prompt = ChatPromptTemplate.from_template(template)
 
-            retriever = self.db.as_retriever()
+            retriever = self.resumedb.as_retriever()
 
             # Build the langchain
             self.chain = (
                 {
                     "context": itemgetter("question") | retriever,
-                    "question": itemgetter("question"),
-                    "history": itemgetter("history"),
+                    "job": itemgetter("job"),
+                    "question": itemgetter("question")
                 }
                 | prompt
                 | self.llm
@@ -127,12 +131,12 @@ class RecruiterAgent:
 
             print("recruiter agent prompt-template initialized...")
 
-    def chat(self, question: str):
+    def chat(self, question: str, jobDescription: str):
         try:
             result = self.chain.invoke(
                 {
                     "question": question,
-                    "history": self.memory.getHistory(),
+                    "job": jobDescription
                 }
             )
 
@@ -144,8 +148,8 @@ class RecruiterAgent:
 
     def analyze(self, job: str):
         try:
-            question = """Please give me a percentage job suitability match based on candidate's resume with the job description.
-                Reply with the percentage suitability, key skill matches and then missing skill matches.  Please sort result by descending order of percentage"""
+            question = """Please analyze each candidate's resume and generate a suitability percentage based on the candidate's interest, relevant skills, experience and educational background based on the job description.
+                Please sort candidates by descending order of percentage"""
 
             result = self.analyzer_chain.invoke(
                 {
