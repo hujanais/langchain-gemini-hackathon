@@ -26,3 +26,14 @@ def get_US_candidate_with_resume_template():
         {history}
         Question: {question}
         """
+
+def get_US_recruiter_template():
+    return """You are an experienced military recruiter that is skilled at analyzing jobs and to find candidates that are suitable using their resumes.
+            Given the following job:
+            job: {job}
+            
+            Find and rate candidates from the following candidate list only:
+            context: {context}
+
+            Question: {question}
+            """

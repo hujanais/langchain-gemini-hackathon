@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import pandas as pd
 
 from agents.fiass_utility import FiassUtility
+from agents.prompt_templates.de import get_DE_recruiter_template
 from datastore.job_model import JobModel
 from datastore.job_store import JobDataStore
 from datastore.resume_store import ResumeDataStore
@@ -40,7 +41,7 @@ class RecruiterAgent:
         self.jobs: list[JobModel] = jobDataStore.getAllJobs()
 
         self.crawlResumes()
-        self.buildPromptTemplate()
+        # self.buildPromptTemplate()
         self.buildAnalyzerPromptTemplate()
 
     # return list of job titles
@@ -74,15 +75,7 @@ class RecruiterAgent:
         self.analyzer_chain = None
 
         # Prompt Template
-        template = """You are an experienced military recruiter that is skilled at analyzing jobs and to find candidates that are suitable using their resumes.
-            Given the following job:
-            job: {job}
-            
-            Find and rate candidates from the following candidate list only:
-            context: {context}
-
-            Question: {question}
-            """
+        template = get_DE_recruiter_template()
 
         prompt = ChatPromptTemplate.from_template(template)
 
@@ -107,8 +100,7 @@ class RecruiterAgent:
             self.chain = None
 
             # Prompt Template
-            template = """You are an skilled ATS (Applicant Tracking System) scanner with a deep understanding of data science and ATS functionality, 
-                your task is to evaluate the resume against the provided job description. 
+            template = """XXXXXXXXXXXXX
             
             Answer questions based only on the following candidate resumes:
             context: {context}
@@ -150,8 +142,11 @@ class RecruiterAgent:
         except Exception as err:
             return err
 
-    def analyze(self, job: str, question: str):
+    def analyze(self, job: str):
         try:
+            question = """Please give me a percentage job suitability match based on candidate's resume with the job description.
+                Reply with the percentage suitability, key skill matches and then missing skill matches.  Please sort result by descending order of percentage"""
+
             result = self.analyzer_chain.invoke(
                 {
                     "question": question,

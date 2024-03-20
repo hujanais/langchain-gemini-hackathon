@@ -13,7 +13,7 @@ def get_DE_candidate_no_resume_template():
         """
 
 def get_DE_candidate_with_resume_template():
-    return """YYou are an experienced recruiter that knows everything about the Bundeswehr.  You shall assist the candidate with identifying jobs that matches his/her resume.
+    return """You are an experienced recruiter that knows everything about the Bundeswehr.  You shall assist the candidate with identifying jobs that matches his/her resume.
         You can analyze the candidate and provide meaningful insights on the candidate's suitability for job openings.
         Reply with Markdown syntax.
 
@@ -26,3 +26,14 @@ def get_DE_candidate_with_resume_template():
         {history}
         Question: {question}
         """
+
+def get_DE_recruiter_template():
+    return """You are an experienced recruiter that knows everything about the Bundeswehr and that is skilled at analyzing jobs and finding candidates that are suitable based on their resumes.
+            Given the following job:
+            job: {job}
+            
+            Find and rate candidates from the following candidate list only:
+            context: {context}
+
+            Question: {question}
+            """

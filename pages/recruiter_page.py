@@ -22,6 +22,5 @@ def recruiter_page(agent: RecruiterAgent):
     if btn_analyze:
         st.markdown(f"Analyzing {selectedJobTitle}")
         selectedJob = job_dict[selectedJobTitle]
-        resp = agent.analyze(job=selectedJob, question="give me the percentage of match of all resumes against \
-            the job description. First the output should come as percentage and then keywords matches and then missing keywords.  Please sort by descending order of percentage")
+        resp = agent.analyze(job=selectedJob)
         st.markdown(resp)
