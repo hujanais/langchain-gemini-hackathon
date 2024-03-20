@@ -1,6 +1,7 @@
 from agents.candidate_agent import CandidateAgent
 from agents.recruiter_agent import RecruiterAgent
 from datastore.job_store import JobDataStore
+from datastore.resume_store import ResumeDataStore
 
 if __name__ == "__main__":
     # agent = CandidateAgent()
@@ -18,6 +19,9 @@ if __name__ == "__main__":
 
     agent = RecruiterAgent()
     jobs = JobDataStore().getAllJobs()
+    us_resumes = ResumeDataStore().getResumes()
+    de_resumes = ResumeDataStore().getDEResumes()
+
     # job_titles = list(map(lambda x: x.title, jobs))
     # print(job_titles)
 

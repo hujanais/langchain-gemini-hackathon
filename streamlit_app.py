@@ -23,17 +23,17 @@ def getAgent(agentName: str):
         raise(f'{agentName} not found')
 
 def main():
-    selection = st.sidebar.radio("Select User Type", ("Candidate", "Recruiter"))
+    selection = st.sidebar.radio("Select User Type", ("Recruiter", "Candidate"))
 
     if selection == "Candidate":
         agent = getAgent('candidate_agent')
         candidate_page.candidate_page(agent)
 
         with st.sidebar:
-            uploaded_file = st.file_uploader("Upload your resume(PDF)...", type=["pdf"])
+            uploaded_file = st.file_uploader("Upload your resume(md)...", type=["md"])
             submit_resume = st.button("Upload")
 
-            if submit_resume:
+            if submit_resume and uploaded_file is not None:
                 agent.initialize_with_resume(uploaded_file)
                 st.empty()
 

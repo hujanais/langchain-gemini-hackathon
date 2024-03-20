@@ -38,13 +38,3 @@ def candidate_page(agent: CandidateAgent):
 
         message = {"role": "assistant", "content": full_response}
         st.session_state.messages.append(message)
-
-    st.text('can we show a list of pre-built prompts')
-    st.text('can we show a list of jobs that fit the candidate in a tabular format?')
-    data = {
-        'Title': ['Job-1', 'Job-2', 'Job-3', 'Job-4'],
-        'Match(%}': [25, 30, 35, 40],
-        'Interested?': [True, True, False, True]
-    }
-    df = pd.DataFrame(data)
-    st.table(df)
