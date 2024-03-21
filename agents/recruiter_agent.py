@@ -1,10 +1,8 @@
 import os
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
 import pandas as pd
 
 from agents.fiass_utility import FiassUtility
-from agents.prompt_templates.de import get_DE_recruiter_template
 from datastore.job_model import JobModel
 from datastore.job_store import JobDataStore
 from datastore.resume_store import ResumeDataStore
@@ -16,7 +14,6 @@ from agents.qa_memory import QAMemory
 
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-from langchain_community.embeddings import GPT4AllEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 
 from langchain_core.documents import Document
@@ -34,29 +31,45 @@ class RecruiterAgent:
         self.llm = ChatGoogleGenerativeAI(
             model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0.1
         )
-
-        # apiKey = os.environ["OPENAI_KEY"]
-        # self.llm = ChatOpenAI(openai_api_key=apiKey, model_name="gpt-3.5-turbo", temperature=0)
         
         self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-        # self.embeddings = GPT4AllEmbeddings()
-        self.resumedb = None
+        self.resumeDb = None
+        self.jobDb = None
         self.chain = None
         self.analyzer_chain = None
-        self.jobs: list[JobModel] = jobDataStore.getAllJobs()
 
-        self.crawlResumes()
-        # self.buildPromptTemplate()
+        self.loadResumes()
+        self.loadJobs()
+        self.buildPromptTemplate()
         self.buildAnalyzerPromptTemplate()
 
-    # return list of job titles
-    def enumerateJobs(self) -> list[str]:
-        job_titles = list(map(lambda x: x.document, self.jobs))
-        return job_titles
+    def loadJobs(self):
+        jobs = jobDataStore.getAllJobs()
+        pages = list(map(lambda x: x.document, jobs))
+        self.list_of_jobs = ', '.join(list(map(lambda x: x.title, jobs)))
 
-    def crawlResumes(self):
+        # Extract page_content from each page
+        page_texts = [page.page_content for page in pages]
+
+        # Option #1. manual splitting by page.  this seems to be better to keep maintain
+        # context of each job description
+        documents = []
+        for page_text in page_texts:
+            documents.append(Document(page_content=page_text))
+
+        print(len(documents))
+
+        # Option #2. split text into chunks
+        # text_splitter = RecursiveCharacterTextSplitter()
+        # documents = text_splitter.create_documents(page_texts)
+
+        # perform embeddings
+        self.jobDb = FAISS.from_documents(documents, self.embeddings)
+
+    def loadResumes(self):
         resumes = resumeDataStore.getDEResumes()
         pages = list(map(lambda x: x.resume, resumes))
+        self.list_of_resumes = ', '.join(list(map(lambda x: x.name, resumes)))
 
         # Extract page_content from each page
         page_texts = [page.page_content for page in pages]
@@ -71,7 +84,7 @@ class RecruiterAgent:
         # # documents = text_splitter.create_documents(page_texts)
 
         # perform embeddings
-        self.resumedb = FAISS.from_documents(documents, self.embeddings)
+        self.resumeDb = FAISS.from_documents(documents, self.embeddings)
 
         print("embeddings completed...")
 
@@ -80,11 +93,20 @@ class RecruiterAgent:
         self.analyzer_chain = None
 
         # Prompt Template
-        template = get_DE_recruiter_template()
+        template = """You are an experienced recruiter that knows everything about the Bundeswehr and that is skilled at analyzing jobs and finding candidates that are suitable based on their resumes.  Look at the 
+            candidate's interest, experience, training and educational background to build your match.
+            Given the following job:
+            job: {job}
+            
+            Find and rate all candidates from the following:
+            context: {context}
+
+            Question: {question}
+            """
 
         prompt = ChatPromptTemplate.from_template(template)
 
-        retriever = self.resumedb.as_retriever()
+        retriever = self.resumeDb.as_retriever()
 
         # Build the langchain
         self.analyzer_chain = (
@@ -109,19 +131,26 @@ class RecruiterAgent:
                 Reply with Markdown syntax.
             
             Answer questions based only on the following:
-            context: {context}
-            job: itemgetter("job"),
+            List of all job openings: [{list_of_jobs}]
+            List of all resumes: [{list_of_resumes}]
+            context: {resumes}
+            job: {job},
             Question: {question}
             """
             prompt = ChatPromptTemplate.from_template(template)
+            prompt = prompt.partial(
+                list_of_jobs=self.list_of_jobs,
+                list_of_resumes=self.list_of_resumes
+            )
 
-            retriever = self.resumedb.as_retriever()
+            retriever = self.resumeDb.as_retriever()
+            jobsRetriever = self.jobDb.as_retriever()
 
             # Build the langchain
             self.chain = (
                 {
-                    "context": itemgetter("question") | retriever,
-                    "job": itemgetter("job"),
+                    "resumes": itemgetter("question") | retriever,
+                    "job": itemgetter("question") | jobsRetriever,
                     "question": itemgetter("question")
                 }
                 | prompt
@@ -131,17 +160,14 @@ class RecruiterAgent:
 
             print("recruiter agent prompt-template initialized...")
 
-    def chat(self, question: str, jobDescription: str):
+    def chat(self, question: str):
         try:
             result = self.chain.invoke(
                 {
-                    "question": question,
-                    "job": jobDescription
+                    "question": question
                 }
             )
 
-            # update the conversation history
-            self.memory.add(question, result)
             return result
         except Exception as err:
             return err

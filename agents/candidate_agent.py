@@ -1,8 +1,6 @@
 import os
 from dotenv import load_dotenv
 
-from agents.prompt_templates.de import get_DE_candidate_no_resume_template, get_DE_candidate_with_resume_template
-from agents.prompt_templates.us import get_US_candidate_no_resume_template
 from datastore.job_store import JobDataStore
 from agents.fiass_utility import FiassUtility
 
@@ -52,7 +50,18 @@ class CandidateAgent:
         self.chain = None
 
         # Prompt Template
-        template = get_DE_candidate_no_resume_template()
+        template = """You are an experienced recruiter that knows everything about the Bundeswehr.  You shall assist the candidate with identifying jobs that matches their interests.
+        You can analyze the candidate and provide meaningful insights on the candidate's suitability for job openings.   You do not have the candidate's resume so you need to try to ask the candidate for pertinent questions to get their info.
+        Reply with Markdown syntax.
+        
+        Answer questions based only on the following:
+        You have access to the list of all job openings: [{list_of_jobs}]
+        context: {context}
+
+        Current conversation:
+        {history}
+        Question: {question}
+        """
 
         prompt = ChatPromptTemplate.from_template(template)
         prompt = prompt.partial(
@@ -91,7 +100,21 @@ class CandidateAgent:
         resume += uploaded_resume.getvalue().decode('utf-8')
 
         # Prompt Template
-        template = get_DE_candidate_with_resume_template()
+        template = """You are an experienced recruiter that knows everything about the Bundeswehr.  You shall assist the candidate with identifying jobs that matches his/her resume.
+        You can analyze the candidate and provide meaningful insights on the candidate's suitability for job openings.
+        Reply with Markdown syntax.
+
+        Answer questions based only on the following:
+        List of all job openings: [{list_of_jobs}]
+        The candidate's resume: {resume}
+        context: {context}
+
+        Do not answer any other jobs from memory.
+
+        Current conversation:
+        {history}
+        Question: {question}
+        """
 
         prompt = ChatPromptTemplate.from_template(template)
         prompt = prompt.partial(

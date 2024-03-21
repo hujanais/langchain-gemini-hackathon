@@ -30,3 +30,6 @@ https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishRe
 # Deploy dockerized app to Google cloudrun
 gcloud builds submit --tag gcr.io/cap-ragged-gem/streamlit-app --project=cap-ragged-gem
 gcloud run deploy --image gcr.io/cap-ragged-gem/streamlit-app --platform managed --project=cap-ragged-gem --allow-unauthenticated
+
+# Deploying to Heroku using Github (not dockerized)
+Create ProcFile and setup.sh
