@@ -18,9 +18,6 @@ if __name__ == "__main__":
     #         print(resp)
 
     agent = RecruiterAgent()
-    jobs = JobDataStore().getAllJobs()
-    us_resumes = ResumeDataStore().getResumes()
-    de_resumes = ResumeDataStore().getDEResumes()
 
     # job_titles = list(map(lambda x: x.title, jobs))
     # print(job_titles)
@@ -32,5 +29,5 @@ if __name__ == "__main__":
             break
 
         if user_input is not None:
-            resp = agent.analyze(job=jobs[0].document, question=user_input)
+            resp = agent.chat(user_input)
             print(resp)    

@@ -24,3 +24,8 @@ def recruiter_page(agent: RecruiterAgent):
         selectedJob = job_dict[selectedJobTitle]
         resp = agent.analyze(job=selectedJob)
         st.markdown(resp)
+
+    # chat input    
+    if user_prompt := st.chat_input():
+        resp = agent.chat(user_prompt)
+        st.markdown(resp)
