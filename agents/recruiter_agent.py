@@ -94,12 +94,12 @@ class RecruiterAgent:
 
         # Prompt Template
         template = """You are an experienced recruiter that knows everything about the Bundeswehr and that is skilled at analyzing jobs and finding candidates that are suitable based on their resumes.  Look at the 
-            candidate's interest, experience, training and educational background to build your match.
-            Given the following job:
+            candidate's interest, experience, training and educational background to build your match.  Before I answer, I will first go get a list of the resumes to make sure I don't miss anyone and then
+            analyze each resume against the job description.
+
+            Your answer is based on the job and resumes which you have full access:
             job: {job}
-            
-            Find and rate all candidates from the following:
-            context: {context}
+            resumes: {resumes}
 
             Question: {question}
             """
@@ -111,7 +111,7 @@ class RecruiterAgent:
         # Build the langchain
         self.analyzer_chain = (
             {
-                "context": itemgetter("question") | retriever,
+                "resumes": itemgetter("question") | retriever,
                 "job": itemgetter("job"),
                 "question": itemgetter("question")
             }
