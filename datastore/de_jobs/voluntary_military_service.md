@@ -1,6 +1,6 @@
 
 **Title**
-Voluntary military service
+Voluntary military service in homeland security “Your year for Germany”
 
 **Job Description**
 

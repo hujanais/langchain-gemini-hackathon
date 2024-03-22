@@ -20,7 +20,7 @@ class JobDataStore:
 
         # load all misc docs
         loader = DirectoryLoader(
-            "./datastore/docs", glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
+            "./datastore/de_docs", glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
         )
 
         # join the jobs and misc docs.
