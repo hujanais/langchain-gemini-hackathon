@@ -33,3 +33,5 @@ gcloud run deploy --image gcr.io/cap-ragged-gem/streamlit-app --platform managed
 
 # Deploying to Heroku using Github (not dockerized)
 Create ProcFile and setup.sh
+
+# Data Scrapping using Selenium
