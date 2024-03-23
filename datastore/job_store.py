@@ -6,17 +6,19 @@ from langchain_core.documents import Document
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.document_loaders import BSHTMLLoader
 
-
 from datastore.job_model import JobModel
 
 class JobDataStore:
     def __init__(self):
         # load all the jobs
-        loader = DirectoryLoader(
-            "./datastore/de_jobs", glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
-        )
+        try:
+            loader = DirectoryLoader(
+                "./datastore/de_jobs_large", glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
+            )
 
-        self.jobs = loader.load()
+            self.jobs = loader.load()
+        except Exception as ex:
+            print(ex)
 
         # load all misc docs
         loader = DirectoryLoader(
