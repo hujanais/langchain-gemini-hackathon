@@ -11,3 +11,4 @@ streamlit
 
 google-generativeai
 langchain-google-genai
+langchain-openai

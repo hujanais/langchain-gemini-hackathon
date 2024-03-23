@@ -8,7 +8,7 @@ def getAgent() -> RecruiterAgent:
         st.session_state.candidate_agent = RecruiterAgent()
     return st.session_state.candidate_agent
 
-st.markdown("### Recruiter View")
+st.markdown("### Recruiter View - !!!CHATGPT!!!")
 
 jobs = JobDataStore().getAllJobs()
 job_titles = list(map(lambda x: x.title, jobs))

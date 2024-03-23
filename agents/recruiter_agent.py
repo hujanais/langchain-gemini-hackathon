@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
 import pandas as pd
 
 from agents.fiass_utility import FiassUtility
@@ -27,11 +28,14 @@ resumeDataStore = ResumeDataStore()
 
 class RecruiterAgent:
     def __init__(self):
-        apiKey = os.environ["GOOGLE_API_KEY"]
-        self.llm = ChatGoogleGenerativeAI(
-            model="models/gemini-pro", google_api_key=apiKey, temperature=0.1
-        )
+        # apiKey = os.environ["GOOGLE_API_KEY"]
+        # self.llm = ChatGoogleGenerativeAI(
+        #     model="models/gemini-pro", google_api_key=apiKey, temperature=0.1
+        # )
         
+        apiKey = os.environ["OPENAI_KEY"]
+        self.llm = ChatOpenAI(openai_api_key = apiKey, model_name = 'gpt-4', temperature=0)
+
         self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         self.resumeDb = None
         self.jobDb = None

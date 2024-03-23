@@ -9,7 +9,7 @@ def getAgent() -> CandidateAgent:
     return st.session_state.candidate_agent
 
 # initialize session states
-st.session_state.title = "### Candidate View - No Resume"
+st.session_state.title = "### Candidate View - No Resume - !!!CHATGPT!!!"
 
 # build sidebar
 with st.sidebar:
@@ -24,7 +24,7 @@ with st.sidebar:
         for item in response:
             full_response += item
         message = {"role": "assistant", "content": full_response}
-        st.session_state.title = "### Candidate View - With Resume"
+        st.session_state.title = "### Candidate View - With Resume - !!!CHATGPT!!!"
         st.session_state.messages.append(message)
 
 if st.session_state.title:
