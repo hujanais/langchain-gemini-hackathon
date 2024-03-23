@@ -17,7 +17,8 @@ Dedicated and skilled individual seeking a position with the Bundeswehr, where I
     -   Bavarian International School, Munich, Germany
     -   Graduated in June 2022
 
-**Work Experience:** **Electronics Technician** XYZ Tech Solutions, Munich, Germany October 2022 - Present
+**Work Experience:** 
+**Electronics Technician** XYZ Tech Solutions, Munich, Germany October 2022 - Present
 
 -   Conducted troubleshooting and repair of electronic equipment.
 -   Assisted in the installation and maintenance of electronic systems.
