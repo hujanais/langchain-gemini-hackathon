@@ -120,7 +120,7 @@ class RecruiterAgent:
             | StrOutputParser()
         )
 
-        print("recruiter agent prompt-template initialized...")
+        print("recruiter agent analyzer-template initialized...")
 
     def buildPromptTemplate(self):
             self.memory = QAMemory(3)
@@ -128,14 +128,18 @@ class RecruiterAgent:
 
             # Prompt Template
             template = """You are an experienced recruiter that knows everything about the Bundeswehr.  You can analyze the candidate's resume against a selected job description.
-                Reply with Markdown syntax.
-            
+            Please note that in the context of this task, you can consider 'candidate' and 'resume' as interchangeable terms. 
+            When referring to either a candidate or a resume, feel free to use either word as appropriate to convey the same meaning.
+
             Answer questions based only on the following:
             List of all job openings: [{list_of_jobs}]
             List of all resumes: [{list_of_resumes}]
             context: {resumes}
             job: {job},
             Question: {question}
+
+            Reply with Markdown syntax.
+
             """
             prompt = ChatPromptTemplate.from_template(template)
             prompt = prompt.partial(

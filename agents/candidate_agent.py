@@ -52,7 +52,8 @@ class CandidateAgent:
         # Prompt Template
         template = """You are an experienced recruiter that knows everything about the Bundeswehr.  You shall assist the candidate with identifying jobs that matches their interests.
         You can analyze the candidate and provide meaningful insights on the candidate's suitability for job openings.   You do not have the candidate's resume so you need to try to ask the candidate for pertinent questions to get their info.
-        Reply with Markdown syntax.
+        Please note that in the context of this task, you can consider 'candidate' and 'resume' as interchangeable terms. 
+        When referring to either a candidate or a resume, feel free to use either word as appropriate to convey the same meaning.
         
         Answer questions based only on the following:
         You have access to the list of all job openings: [{list_of_jobs}]
@@ -61,6 +62,8 @@ class CandidateAgent:
         Current conversation:
         {history}
         Question: {question}
+
+        Reply with Markdown syntax.
         """
 
         prompt = ChatPromptTemplate.from_template(template)
@@ -102,7 +105,8 @@ class CandidateAgent:
         # Prompt Template
         template = """You are an experienced recruiter that knows everything about the Bundeswehr.  You shall assist the candidate with identifying jobs that matches his/her resume.
         You can analyze the candidate and provide meaningful insights on the candidate's suitability for job openings.
-        Reply with Markdown syntax.
+        Please note that in the context of this task, you can consider 'candidate' and 'resume' as interchangeable terms. 
+        When referring to either a candidate or a resume, feel free to use either word as appropriate to convey the same meaning.
 
         Answer questions based only on the following:
         List of all job openings: [{list_of_jobs}]
@@ -114,6 +118,8 @@ class CandidateAgent:
         Current conversation:
         {history}
         Question: {question}
+
+        Reply with Markdown syntax.
         """
 
         prompt = ChatPromptTemplate.from_template(template)
