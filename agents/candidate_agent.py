@@ -11,7 +11,6 @@ from agents.qa_memory import QAMemory
 
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-from langchain_community.embeddings import GPT4AllEmbeddings
 import PyPDF2 as pdf
 from langchain_community.document_loaders import PyPDFLoader
 
@@ -34,10 +33,9 @@ class CandidateAgent:
         print("ctor CandidateAgent")
         apiKey = os.environ["GOOGLE_API_KEY"]
         self.llm = ChatGoogleGenerativeAI(
-            model="models/gemini-1.0-pro-001", google_api_key=apiKey, temperature=0.1
+            model="models/gemini-pro", google_api_key=apiKey, temperature=0.1
         )
         self.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-        # self.embeddings = GPT4AllEmbeddings()
         self.memory = QAMemory(3)
         self.db = None
         self.chain = None

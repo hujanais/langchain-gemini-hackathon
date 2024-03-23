@@ -32,6 +32,7 @@ class JobDataStore:
         allDocs: list[JobModel] = []
         for document in self.documents:
             arr = document.page_content.split("\n")
+            print(arr[1])
             allDocs.append(JobModel(title=arr[1], document=document))
 
         return allDocs
@@ -40,6 +41,7 @@ class JobDataStore:
         jobs: list[JobModel] = []
         for document in self.jobs:
             arr = document.page_content.split("\n")
+            print(arr[1])
             jobs.append(JobModel(title=arr[1], document=document))
 
         return jobs
