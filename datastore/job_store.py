@@ -13,7 +13,7 @@ class JobDataStore:
         # load all the jobs
         try:
             loader = DirectoryLoader(
-                "./datastore/de_jobs_large", glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
+                "./datastore/de_jobs", glob="**/*.md", loader_cls=UnstructuredMarkdownLoader
             )
 
             self.jobs = loader.load()
