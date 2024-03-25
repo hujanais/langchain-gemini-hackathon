@@ -38,7 +38,8 @@ class ResumeDataStore:
             ['Luca Fischer', './datastore/de_resumes/luca_fischer.md'],
             ['Lucas Becker', './datastore/de_resumes/lucas_becker.md'],
             ['Markus Weber', './datastore/de_resumes/markus_weber.md'],
-            ['Julia Schneider', './datastore/de_resumes/julia_schneider.md']
+            ['Julia Schneider', './datastore/de_resumes/julia_schneider.md'],
+            ['Ben Bernard', './datastore/de_resumes/Ben_Bernard.md']
         ]
 
         # enumerate all resumes
