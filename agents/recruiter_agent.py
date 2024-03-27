@@ -37,6 +37,7 @@ class RecruiterAgent:
         self.jobDb = None
         self.chain = None
         self.analyzer_chain = None
+        self.memory = QAMemory(3)
 
         self.loadResumes()
         self.loadJobs()
@@ -136,6 +137,9 @@ class RecruiterAgent:
             List of all resumes: [{list_of_resumes}]
             context: {resumes}
             job: {job},
+
+            Current conversation:
+            {history}
             Question: {question}
 
             Reply with Markdown syntax.
@@ -155,7 +159,8 @@ class RecruiterAgent:
                 {
                     "resumes": itemgetter("question") | retriever,
                     "job": itemgetter("question") | jobsRetriever,
-                    "question": itemgetter("question")
+                    "question": itemgetter("question"),
+                    "history": itemgetter("history")
                 }
                 | prompt
                 | self.llm
@@ -168,11 +173,15 @@ class RecruiterAgent:
         try:
             result = self.chain.invoke(
                 {
-                    "question": question
+                    "question": question,
+                    "history": self.memory.getHistory()
                 }
             )
 
+            # update the conversation history
+            self.memory.add(question, result)
             return result
+
         except Exception as err:
             return err
 
