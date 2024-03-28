@@ -21,10 +21,22 @@ selectedJobTitle = st.selectbox(
     job_titles,
 )
 
-btn_analyze = st.button('Analyze')
+col1, col2 = st.columns(2)
 
-if btn_analyze:
-    st.markdown(f"Analyzing {selectedJobTitle}")
+with col1:
+    btn_analyze_job = st.button('Analyze Job')
+
+with col2:
+    btn_analyze_candidates = st.button('Find candidates')
+
+if btn_analyze_job:
+    st.markdown(f"Analyzing {selectedJobTitle}...")
+    selectedJob = job_dict[selectedJobTitle]
+    resp = getAgent().analyze_job(job=selectedJob)
+    st.markdown(resp)
+
+if btn_analyze_candidates:
+    st.markdown(f"Finding candidates for {selectedJobTitle}...")
     selectedJob = job_dict[selectedJobTitle]
     resp = getAgent().analyze(job=selectedJob)
     st.markdown(resp)
