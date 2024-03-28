@@ -38,6 +38,7 @@ class RecruiterAgent:
         self.chain = None
         self.analyzer_chain = None
         self.memory = QAMemory(3)
+        self.memory = QAMemory(3)
 
         self.loadResumes()
         self.loadJobs()
@@ -94,13 +95,12 @@ class RecruiterAgent:
         self.analyzer_chain = None
 
         # Prompt Template
-        template = """You are an experienced recruiter that knows everything about the Bundeswehr and that is skilled at analyzing jobs and finding candidates that are suitable based on their resumes.  Look at the 
-            candidate's interest, experience, training and educational background to build your match.  Before I answer, I will first go get a list of the resumes to make sure I don't miss anyone and then
-            analyze each resume against the job description.
+        template = """You are an experienced recruiter that knows everything about the Bundeswehr and that is skilled at analyzing jobs and finding candidates that are suitable based on their resumes.  You will first analyze the important
+        aspects of the job and then go through the list of all candidates.  For each candidate, you wil then analyze the candidate's interest, experience, training and educational background to build your match.  You shall consider 'candidate' and 'resume' as interchangeable terms.
 
             Your answer is based on the job and resumes which you have full access:
             job: {job}
-            resumes: {resumes}
+            context: {resumes}
 
             Question: {question}
             """
@@ -129,14 +129,13 @@ class RecruiterAgent:
 
             # Prompt Template
             template = """You are an experienced recruiter that knows everything about the Bundeswehr.  You can analyze the candidate's resume against a selected job description.
-            Please note that in the context of this task, you can consider 'candidate' and 'resume' as interchangeable terms. 
             When referring to either a candidate or a resume, feel free to use either word as appropriate to convey the same meaning.
 
             Answer questions based only on the following:
             List of all job openings: [{list_of_jobs}]
             List of all resumes: [{list_of_resumes}]
+            job: {job}
             context: {resumes}
-            job: {job},
 
             Current conversation:
             {history}
@@ -185,7 +184,26 @@ class RecruiterAgent:
         except Exception as err:
             return err
 
-    def analyze(self, job: str):
+    def analyze_job(self, job: JobModel):
+        print('analyze_job', job.title)
+        try:
+            question = """Please analyze the job description and list the important skills."""
+
+            result = self.analyzer_chain.invoke(
+                {
+                    "question": question,
+                    "job": job.document
+                }
+            )
+
+            # update the conversation history
+            # self.memory.add(question, result)
+            return result
+        except Exception as err:
+            return err 
+        
+    def analyze(self, job: JobModel):
+        print('find_candidates', job.title)
         try:
             question = """Please analyze each candidate's resume and generate a suitability percentage based on the candidate's interest, relevant skills, experience and educational background based on the job description.
                 Please sort candidates by descending order of percentage"""
@@ -193,12 +211,12 @@ class RecruiterAgent:
             result = self.analyzer_chain.invoke(
                 {
                     "question": question,
-                    "job": job
+                    "job": job.document
                 }
             )
 
             # update the conversation history
-            self.memory.add(question, result)
+            # self.memory.add(question, result)
             return result
         except Exception as err:
             return err 
