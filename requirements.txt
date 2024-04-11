@@ -5,9 +5,14 @@ markdown
 bs4
 unstructured
 faiss-cpu
+chromadb
 PyPDF2
+matplotlib
 
 streamlit
 
 google-generativeai
 langchain-google-genai
+langchain-openai
+
+lark
