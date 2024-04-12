@@ -45,7 +45,7 @@ class VectorDbRagAgent:
             self.docs.extend(loader.load())
 
         self.small_chunks_retriever()
-        # self.full_chunks_retriever()
+        self.full_chunks_retriever()
 
     def small_chunks_retriever(self):
         # This text splitter is used to create the child documents
@@ -67,17 +67,15 @@ class VectorDbRagAgent:
         small_chunk_retriever.add_documents(self.docs, ids=None)
 
         sub_docs = vectorstore.similarity_search("what is langsmith?", k=2)
-        print(sub_docs[0].page_content)
-        print("#######################")
+        # print(sub_docs[0].page_content)
+        # print("#######################")
         retrieved_docs = small_chunk_retriever.get_relevant_documents("what is langsmith?")
         # print(retrieved_docs[0].page_content)
 
-        qa = RetrievalQA.from_chain_type(llm=self.llm,
+        self.small_qa = RetrievalQA.from_chain_type(llm=self.llm,
                                  chain_type="stuff",
                                  retriever=small_chunk_retriever)
         
-        print(qa.invoke('what is langsmith?'))
-
     def full_chunks_retriever(self):
        # This text splitter is used to create the parent documents - The big chunks
         parent_splitter = RecursiveCharacterTextSplitter(chunk_size=2000)
@@ -101,17 +99,13 @@ class VectorDbRagAgent:
 
         big_chunks_retriever.add_documents(self.docs)
 
-        qa = RetrievalQA.from_chain_type(llm=self.llm,
+        self.large_qa = RetrievalQA.from_chain_type(llm=self.llm,
                                  chain_type="stuff",
                                  retriever=big_chunks_retriever)
         
-        print(qa.invoke('what is langsmith?'))
+    def run_small(self, query: str) -> str:
+        return self.small_qa.invoke(query)
 
-    def run(self, query: str) -> str:
-        docs = self.retriever.invoke(query)
-        for document in docs:
-            print(document.page_content)
-            print(document.metadata)
-            print()
+    def run_large(self, query: str) -> str:
+        return self.large_qa.invoke(query)
 
-        return "docs"

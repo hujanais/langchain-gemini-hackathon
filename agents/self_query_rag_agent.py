@@ -1,4 +1,5 @@
 import os
+from typing import List
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 load_dotenv()
@@ -123,6 +124,7 @@ class SelfQueryRagAgent:
                 },
             ),
         ]
+        print('updating vectorstore')
         vectorstore = Chroma.from_documents(docs, self.embeddings)
 
         metadata_field_info = [
@@ -159,16 +161,23 @@ class SelfQueryRagAgent:
         ]
         document_content_description = "Brief description of the wine"
 
+        # retriever = SelfQueryRetriever.from_llm(
+        #     llm, vectorstore, document_content_description, metadata_field_info, verbose=True, enable_limit=True, 
+        #     search_kwargs={"k":10}
+        # )
+
         self.retriever = SelfQueryRetriever.from_llm(
             self.llm,
             vectorstore,
             document_content_description,
             metadata_field_info,
-            verbose=True
+            verbose=True,
+            enable_limit=True,
+            search_kwargs={"k":10}
         )
 
-    def run(self, query: str) -> str:
-        docs = self.retriever.invoke(query)
+    def run(self, query: str) -> List[Document]:
+        docs = self.retriever.get_relevant_documents(query)
         for document in docs:
             print(document.page_content)
             print(document.metadata)

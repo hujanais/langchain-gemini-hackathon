@@ -32,5 +32,5 @@ if __name__ == "__main__":
 
         if user_input is not None:
             # resp = agent.chat(user_input)
-            resp = agent.run(user_input)
-            print(resp)    
+            print(agent.run_small(user_input))
+            print(agent.run_large(user_input))
