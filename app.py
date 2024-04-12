@@ -1,7 +1,6 @@
-from agents.candidate_agent import CandidateAgent
-from agents.recruiter_agent import RecruiterAgent
-from datastore.job_store import JobDataStore
-from datastore.resume_store import ResumeDataStore
+from agents.self_query_rag_agent import SelfQueryRagAgent
+from agents.vectordb_rag_agent import VectorDbRagAgent
+
 
 if __name__ == "__main__":
     # agent = CandidateAgent()
@@ -17,10 +16,13 @@ if __name__ == "__main__":
     #         resp = agent.chat(user_input)
     #         print(resp)
 
-    agent = RecruiterAgent()
+    # agent = RecruiterAgent()
 
     # job_titles = list(map(lambda x: x.title, jobs))
     # print(job_titles)
+
+    # agent = SelfQueryRagAgent()
+    agent = VectorDbRagAgent()
 
     while True:
         user_input = input(">> ")
@@ -29,5 +31,6 @@ if __name__ == "__main__":
             break
 
         if user_input is not None:
-            resp = agent.chat(user_input)
-            print(resp)    
+            # resp = agent.chat(user_input)
+            print(agent.run_small(user_input))
+            print(agent.run_large(user_input))
