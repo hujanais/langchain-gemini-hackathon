@@ -10,12 +10,15 @@ agent = MultiModalAgent()
 st.markdown("### Multimodal LLM")
 
 image_url = st.text_input(label='Image URL', value='https://picsum.photos/200')
-btn_submit = st.button('Analyze')
+txt_query = st.text_input('User input', placeholder="Describe this image vividly to someone who is visually impared?")
 
-if btn_submit:
+if (txt_query):
+    print(txt_query)
+
+if txt_query:
     if image_url:
         response = requests.get(image_url)
         img = Image.open(BytesIO(response.content))
         st.image(img)
-        resp = agent.multimodal_chat(img)
+        resp = agent.multimodal_chat(txt_query, img)
         st.markdown(resp)
