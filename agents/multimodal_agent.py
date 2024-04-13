@@ -30,7 +30,7 @@ class MultiModalAgent:
         resp = self.llm.invoke(question)
         return resp.content
 
-    def multimodal_chat(self, image: Image) -> str:
+    def multimodal_chat(self, query: str, image: Image) -> str:
 
         # response = requests.get(image_url)
         # image_data = BytesIO(response.content)
@@ -46,7 +46,7 @@ class MultiModalAgent:
 
         # using Google Gemini API directly
         resp = self.model.generate_content(
-            ["Describe this image vividly to someone who is visually impared?", image]
+            [query, image]
         )
         return resp.text
 
