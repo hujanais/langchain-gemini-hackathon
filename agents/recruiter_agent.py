@@ -144,7 +144,7 @@ class RecruiterAgent:
             Reply with Markdown syntax.
 
             """
-            prompt = ChatPromptTemplate.from_template(template)
+            prompt = ChatPromptTemplate.from_template(template, kwargs={"k":100})
             prompt = prompt.partial(
                 list_of_jobs=self.list_of_jobs,
                 list_of_resumes=self.list_of_resumes
